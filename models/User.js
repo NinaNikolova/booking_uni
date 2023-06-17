@@ -6,7 +6,13 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique: true,
-        minlength: [3, 'Username must be at least 3 characters long']
+        match:[/^[a-zA-Z0-9]+$/i,'Username may contain only english letters and numbers']
+        
+    },
+    email:{
+        type: String,
+        required: true,
+        unique: true
     },
     hashedPassword: {
         type: String,
@@ -14,6 +20,12 @@ const userSchema = new Schema({
     }
 })
 // index allows to set unic in usarname
+userSchema.index({email: 1 }, {
+    collation:{
+        locale: 'en',
+        strength: 2
+    }
+})
 userSchema.index({username: 1 }, {
     collation:{
         locale: 'en',
