@@ -1,7 +1,11 @@
 const {Schema, model} = require('mongoose');
 
-// TODO add user properties and validation according to assignment
 const userSchema = new Schema({
+    email:{
+        type: String,
+        required: true,
+        unique: true
+    },
     username: {
         type: String,
         required: true,
@@ -9,17 +13,13 @@ const userSchema = new Schema({
         match:[/^[a-zA-Z0-9]+$/i,'Username may contain only english letters and numbers']
         
     },
-    email:{
-        type: String,
-        required: true,
-        unique: true
-    },
+
     hashedPassword: {
         type: String,
         required: true
     }
 })
-// index allows to set unic in usarname
+// index allows to set unicue in username
 userSchema.index({email: 1 }, {
     collation:{
         locale: 'en',
