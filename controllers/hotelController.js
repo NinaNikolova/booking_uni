@@ -5,6 +5,11 @@ const hotelController = require('express').Router();
 hotelController.get('/:id/details', async (req, res) => {
     const id = req.params.id;
     const hotel = await getById(id).lean()
+    // !!! new property to object
+    if (hotel.owner == req.user._id) {
+        // we modify object !!!
+        hotel.isOwner = true;
+    }
     res.render('details', {
         hotel
     })
@@ -80,5 +85,17 @@ hotelController.post('/:id/edit', async (req, res) => {
     }
 
 
+});
+
+hotelController.get('/:id/delete', async (req, res) => {
+    const id = req.params.id;
+    const hotel = await getById(id)
+    if (hotel.owner != req.user._id) {
+        return res.redirect('/auth/login')
+    }
+
+    await deleteById(id)
+
+    res.redirect('/')
 });
 module.exports = hotelController;
