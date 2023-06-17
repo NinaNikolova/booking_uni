@@ -9,6 +9,8 @@ hotelController.get('/:id/details', async (req, res) => {
     if (hotel.owner == req.user._id) {
         // we modify object !!!
         hotel.isOwner = true;
+    } else if (hotel.usersBooked.map(b=>b.toString()).includes((req.user._id).toString())) {
+        hotel.isBooked = true;
     }
     res.render('details', {
         hotel
@@ -97,5 +99,25 @@ hotelController.get('/:id/delete', async (req, res) => {
     await deleteById(id)
 
     res.redirect('/')
+});
+hotelController.get('/:id/book', async (req, res) => {
+    const id = req.params.id;
+    const hotel = await getById(id)
+    try {
+        if (hotel.owner == req.user._id) {
+            hotel.isOwner = true;
+            throw new Error('Cannot book your own hotel')
+        }
+
+        await bookRoom(id, req.user._id)
+        res.redirect(`/hotel/${id}/details`)
+
+    } catch (error) {
+        res.render('details', {
+            hotel,
+            errors: parseError(error)
+        })
+    }
+
 });
 module.exports = hotelController;

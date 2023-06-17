@@ -13,7 +13,7 @@ function create(hotel) {
 async function update(id, hotel) {
     const existing = await Hotel.findById(id);
     existing.name = hotel.name;
-    existing.city=hotel.city;
+    existing.city = hotel.city;
     existing.imageUrl = hotel.imageUrl;
     existing.rooms = hotel.rooms;
     await existing.save();
@@ -24,8 +24,13 @@ async function update(id, hotel) {
 function deleteById(id) {
     return Hotel.findByIdAndDelete(id)
 }
-function bookRoom(hotelId, userId) {
-    
+async function bookRoom(hotelId, userId) {
+    const hotel = await Hotel.findById(hotelId);
+    if (hotel.usersBooked.includes(userId)) {
+        throw new Error('Cannot book twice')
+    }
+    hotel.usersBooked.push(userId);
+    await hotel.save()
 }
 module.exports = {
     getAll,
