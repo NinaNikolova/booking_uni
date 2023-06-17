@@ -22,7 +22,7 @@ async function register(email, username, password) {
     const token = createSession(user)
     return token;
 }
-async function login(username, password) {
+async function login(email, password) {
     const existing = await User.findOne({email}).collation({locale:'en', strength: 2})
     if(!existing){
         throw new Error('Incorrect email or password')

@@ -17,6 +17,10 @@ authController.post('/register', async (req, res) => {
         if(validator.isEmail(req.body.email)==false){
             throw new Error('Invalid email')
         }
+        
+        if (req.body.password.length < 5) {
+            throw new Error('Password must be at least 5 characters long')
+        }
     
         if (req.body.password != req.body.repass) {
             throw new Error('Passwords don\'t match')
@@ -59,11 +63,11 @@ authController.post('/login', async (req, res) => {
         }
         const token = await login(req.body.email, req.body.password);
         res.cookie('token', token, { httpOnly: true })
-        res.redirect('/') //TODO replace with redirect by assignment
+        res.redirect('/') 
 
     } catch (error) {
         const errors = parseError(error);
-           // TODO add error display to actual template from assignment
+          
         res.render('login', {
             title: 'Login Page',
             errors,
