@@ -12,7 +12,7 @@
     <div id="container">
         {{#if errors}}
         <div>
-     
+
             <div class="notification errorBox">
                 {{#each errors}}
                 <span>{{this}}</span>
@@ -25,15 +25,23 @@
             <div class="left-container">
                 <ul>
                     <li><a href="/">Home</a></li>
+                    {{#if user}}
+                    <li><a href="/hotel/create">Add +</a></li>
+
+                    {{else}}
                     <li><a href="/auth/login">Login</a></li>
                     <li><a href="/auth/register">Register</a></li>
-                    <li><a href="/hotel/create">Add +</a></li>
+
+
+                    {{/if}}
                 </ul>
             </div>
+            {{#if user}}
             <div class="right-container">
-                <a href="/profile" class="log-out">{{name}}</a>
+                <a href="/profile" class="log-out">{{user.username}}</a>
                 <a href="/auth/logout" class="log-out">Logout</a>
             </div>
+            {{/if}}
         </nav>
 
         {{{body}}}
