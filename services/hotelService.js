@@ -11,7 +11,7 @@ function create(hotel) {
 }
 
 function update(id, hotel) {
-    const hotel = Hotel.findByIdAndUpdate(id, hotel)
+    return Hotel.findByIdAndUpdate(id, hotel)
 }
 function deleteById(id) {
     return Hotel.findByIdAndDelete(id)
