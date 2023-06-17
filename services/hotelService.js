@@ -3,6 +3,9 @@ const Hotel = require("../models/Hotel")
 function getAll() {
     return Hotel.find()
 }
+async function getByUserBooking(userId) {
+    return await Hotel.find({usersBooked:userId}).lean();
+}
 function getById(id) {
     return Hotel.findById(id)
 }
@@ -38,5 +41,6 @@ module.exports = {
     create,
     update,
     deleteById,
-    bookRoom
+    bookRoom,
+    getByUserBooking
 }
