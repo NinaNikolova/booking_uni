@@ -1,11 +1,12 @@
 const { Schema, model, Types } = require('mongoose');
 
+const URL_PATTERN = /^https?:\/\/.+$/i;
 const hotelSchema = new Schema({
     name: {
         type: String,
-        required: [true,'Name is required'],
+        required: [true,'Hotel name is required'],
         unique: true,
-        minlength: [4, 'Name should be at least 3 characters long']
+        minlength: [4, 'Hotel name should be at least 4 characters long']
     },
     city: {
         type: String,
@@ -15,7 +16,12 @@ const hotelSchema = new Schema({
     imageUrl: {
         type: String,
         required: [true,'ImageUrl is required'],
-        match:[/^https?.+/, 'Inccorect image URL']
+        validate:{
+            validator: (value)=>{URL_PATTERN.test(value)},
+            message: 'Image URL is not valid'
+        }
+
+        // match:[/^https?.+/, 'Inccorect image URL']
 
     },
     rooms:{
