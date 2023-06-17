@@ -2,9 +2,11 @@ const { create, getAll, getById, update, deleteById, bookRoom } = require('../se
 const { parseError } = require('../util/parser');
 const hotelController = require('express').Router();
 
-hotelController.get('/:id/details', (req, res) => {
+hotelController.get('/:id/details', async (req, res) => {
+    const id = req.params.id;
+    const hotel = await getById(id).lean()
     res.render('details', {
-        user: req.user
+        hotel
     })
 });
 
@@ -19,7 +21,7 @@ hotelController.post('/create', async (req, res) => {
         name: req.body.name,
         city: req.body.city,
         imageUrl: req.body.imageUrl,
-        rooms: req.body.rooms,
+        rooms: Number(req.body.rooms),
         owner: req.user._id
     }
 
@@ -39,9 +41,44 @@ hotelController.post('/create', async (req, res) => {
 
 });
 
-hotelController.get('/:id/edit', (req, res) => {
+hotelController.get('/:id/edit', async (req, res) => {
+    const id = req.params.id;
+    const hotel = await getById(id).lean()
+    if (hotel.owner != req.user._id) {
+        return res.redirect('/auth/login')
+    }
     res.render('edit', {
-        user: req.user
+        hotel
     })
+});
+hotelController.post('/:id/edit', async (req, res) => {
+    const id = req.params.id;
+    const hotel = await getById(id).lean()
+    // !!! use in detail too
+    if (hotel.owner != req.user._id) {
+        return res.redirect('/auth/login')
+    }
+
+    const edited = {
+        name: req.body.name,
+        city: req.body.city,
+        imageUrl: req.body.imageUrl,
+        rooms: Number(req.body.rooms),
+    }
+    try {
+        if (Object.values(edited).some(v => !v)) {
+            throw new Error('All fields are required')
+        }
+        await update(id, edited);
+        res.redirect(`/hotel/${id}/details`)
+    } catch (error) {
+        const errors = parseError(error)
+        res.render('edit', {
+            errors,
+            hotel: Object.assign(edited, { _id: id })
+        })
+    }
+
+
 });
 module.exports = hotelController;

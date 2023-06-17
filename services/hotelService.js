@@ -10,9 +10,17 @@ function create(hotel) {
     return Hotel.create(hotel)
 }
 
-function update(id, hotel) {
-    return Hotel.findByIdAndUpdate(id, hotel)
+async function update(id, hotel) {
+    const existing = await Hotel.findById(id);
+    existing.name = hotel.name;
+    existing.city=hotel.city;
+    existing.imageUrl = hotel.imageUrl;
+    existing.rooms = hotel.rooms;
+    await existing.save();
 }
+
+
+
 function deleteById(id) {
     return Hotel.findByIdAndDelete(id)
 }
